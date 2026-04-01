@@ -18,17 +18,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-          # 🔑 自动注入 Maven server 认证
-          server-username: ${{ secrets.OSSRH_USERNAME }}
-          server-password: ${{ secrets.OSSRH_PASSWORD }}
-          # 🔑 GPG 配置（如果提供则自动使用）
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Extract version from tag
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Update version in pom.xml
-        run: |
-          mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Publish to Central
+        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -B clean deploy -P release
+        env:
+          # 新平台凭证
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+          # GPG 密码 (maven-gpg-plugin 需要)
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+

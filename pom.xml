@@ -86,9 +86,7 @@
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
+                                <goals><goal>jar-no-fork</goal></goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -99,12 +97,12 @@
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
+                                <goals><goal>jar</goal></goals>
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!-- 3. GPG 签名插件 -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -113,32 +111,27 @@
                             <execution>
                                 <id>sign-artifacts</id>
                                 <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
+                                <goals><goal>sign</goal></goals>
                                 <configuration>
-                                    <!-- 关键：使用 loopback 模式适配 CI 环境 -->
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
                                     </gpgArguments>
-                                    <!-- 可选：指定 key ID，避免多密钥冲突 -->
-                                    <!-- <key>${env.GPG_KEY_NAME}</key> -->
-                                    <!-- 可选：使用 passphrase 环境变量 -->
-                                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!-- 4. 新平台发布插件 (核心) -->
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.5.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish> <!-- 自动发布，无需手动在 UI 点击 -->
+                            <waitUntil>published</waitUntil> <!-- 等待直到发布完成 -->
                         </configuration>
                     </plugin>
                 </plugins>
