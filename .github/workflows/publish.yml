@@ -1,4 +1,4 @@
-name: Publish to Maven Central
+name: Publish to Sonatype Central
 
 on:
   push:
@@ -9,33 +9,35 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
 
-      - name: Extract version from tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: false
+          git_commit_gpgsign: false
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
       - name: Publish to Central
-        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -B clean deploy -P release
+        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -B clean deploy
         env:
-          # 新平台凭证
+          # ✅ 新平台凭证（环境变量名必须匹配）
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
-          # GPG 密码 (maven-gpg-plugin 需要)
+          # GPG 密码
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
 
