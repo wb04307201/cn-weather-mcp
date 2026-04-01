@@ -17,7 +17,7 @@
 - Spring AI MCP (Model Context Protocol)
 - Jackson JSON
 
-## 使用stdio
+## stdio配置
 
 > **推荐**：使用 jbang 时不需要特定的安装步骤。我们将使用 jbang 直接运行 cn-weather-mcp。
 
