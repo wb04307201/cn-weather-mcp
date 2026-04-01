@@ -19,11 +19,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
           # 🔑 自动注入 Maven server 认证
-          server-username: OSSRH_USERNAME
-          server-password: OSSRH_PASSWORD
-          # 🔑 GPG 配置（如果使用）
+          server-username: ${{ secrets.OSSRH_USERNAME }}
+          server-password: ${{ secrets.OSSRH_PASSWORD }}
+          # 🔑 GPG 配置（如果提供则自动使用）
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Extract version from tag
         id: version
@@ -32,18 +32,3 @@ jobs:
       - name: Update version in pom.xml
         run: |
           mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false
-
-      - name: Import GPG key (if needed)
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
-      - name: Publish to Maven Central
-        run: mvn deploy -P release -DskipTests
-        env:
-          # 这些环境变量会被 setup-java 自动读取并注入 settings.xml
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
