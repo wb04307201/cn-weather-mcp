@@ -31,8 +31,11 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
+      - name: Set Version
+        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false -B
+
       - name: Publish to Central
-        run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -B clean deploy
+        run: mvn  -B clean deploy
         env:
           # ✅ 新平台凭证（环境变量名必须匹配）
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
