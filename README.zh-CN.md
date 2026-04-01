@@ -1,21 +1,15 @@
-
-
 # cn-weather-mcp
 
-基于 Model Context Protocol (MCP) 的中国天气查询服务。这是一个 Spring Boot 应用程序，提供中国城市天气数据的查询功能。
+基于 Model Context Protocol (MCP) 的中国天气查询服务。
+
+<div align="right">
+  <a href="README.md">English</a> | 中文
+</div>
 
 ## 功能特性
 
 - **实时天气查询**：通过城市代码获取指定城市的当前天气信息
-- **城市代码搜索**：根据城市名称搜索对应的天气代码
-- **城市代码支持**：内置中国 300+ 城市代码数据
-
-## 技术栈
-
-- Java 17+
-- Spring Boot 3.x
-- Spring AI MCP (Model Context Protocol)
-- Jackson JSON
+- **城市代码搜索**：根据城市名称搜索对应的天气代码，内置中国 300+ 城市代码数据
 
 ## stdio配置
 
@@ -26,7 +20,7 @@
   "mcpServers": {
     "cn-weather-mcp": {
       "args": [
-        "io.github.wb04307201:cn-weather-mcp:0.0.1"
+        "io.github.wb04307201:cn-weather-mcp:1.0.0"
       ],
       "command": "jbang"
     }
