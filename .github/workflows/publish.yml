@@ -3,7 +3,7 @@ name: Publish to Maven Central
 on:
   push:
     tags:
-      - 'v*'  # 匹配如 v1.0.0 的标签
+      - 'v*'
 
 jobs:
   publish:
@@ -27,10 +27,28 @@ jobs:
         run: |
           mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false
 
+      # 🔑 导入 GPG 密钥
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      # 🔑 或者手动导入（如果不使用 action）
+      # - name: Setup GPG
+      #   run: |
+      #     echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+      #     echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+      #     echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+      #     gpg-connect-agent reloadagent /bye
+
       - name: Publish to Maven Central
         run: mvn deploy -P release -DskipTests
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          # 如果使用手动导入，需要传递 key ID
+          # GPG_KEY_NAME: ${{ steps.import_gpg.outputs.keyid }}

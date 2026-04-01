@@ -117,10 +117,15 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
+                                    <!-- 关键：使用 loopback 模式适配 CI 环境 -->
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
                                     </gpgArguments>
+                                    <!-- 可选：指定 key ID，避免多密钥冲突 -->
+                                    <!-- <key>${env.GPG_KEY_NAME}</key> -->
+                                    <!-- 可选：使用 passphrase 环境变量 -->
+                                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
                                 </configuration>
                             </execution>
                         </executions>
