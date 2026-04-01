@@ -18,6 +18,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+          # 🔑 自动注入 Maven server 认证
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
+          # 🔑 GPG 配置（如果使用）
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
 
       - name: Extract version from tag
         id: version
@@ -27,28 +33,17 @@ jobs:
         run: |
           mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -DgenerateBackupPoms=false
 
-      # 🔑 导入 GPG 密钥
-      - name: Import GPG key
-        id: import_gpg
+      - name: Import GPG key (if needed)
+        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
         uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-
-      # 🔑 或者手动导入（如果不使用 action）
-      # - name: Setup GPG
-      #   run: |
-      #     echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-      #     echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-      #     echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-      #     gpg-connect-agent reloadagent /bye
 
       - name: Publish to Maven Central
         run: mvn deploy -P release -DskipTests
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          # 如果使用手动导入，需要传递 key ID
-          # GPG_KEY_NAME: ${{ steps.import_gpg.outputs.keyid }}
+          # 这些环境变量会被 setup-java 自动读取并注入 settings.xml
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
