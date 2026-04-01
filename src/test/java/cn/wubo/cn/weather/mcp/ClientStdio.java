@@ -66,7 +66,7 @@ public class ClientStdio {
 		System.out.println("cityName: " + CityCodeResult);
 
 		CallToolResult alertResult = client.callTool(new CallToolRequest("getCurrentWeather", Map.of("cityCode", "101060101")));
-		System.out.println("Alert Response = " + alertResult);
+		System.out.println("currentWeather:" + alertResult);
 
 		client.closeGracefully();
 	}
