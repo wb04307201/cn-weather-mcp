@@ -6,9 +6,9 @@ spring:
     mcp:
       server:
         name: cn-weather-mcp
-        version: 0.0.1
+        version: 1.0.0
 logging:
   pattern:
     console:
   file:
-    name: ./cn-weather-mcp.log
+    name: ./mcp/cn-weather-mcp.log
