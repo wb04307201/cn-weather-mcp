@@ -117,10 +117,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <!-- 默认跳过 GPG 签名,通过 -Dgpg.skip=false 或在 CI 环境中启用 -->
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
 
             <!-- 4. 新平台发布插件 (核心) -->
