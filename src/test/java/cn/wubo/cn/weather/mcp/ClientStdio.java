@@ -63,10 +63,10 @@ public class ClientStdio {
 
 		CallToolResult CityCodeResult = client.callTool(new CallToolRequest("searchCityCode",
 				Map.of("cityName", "长春")));
-		System.out.println("cityName: " + CityCodeResult);
+		System.out.println("cityName " + CityCodeResult);
 
-		CallToolResult alertResult = client.callTool(new CallToolRequest("getCurrentWeather", Map.of("cityCode", "101060101")));
-		System.out.println("currentWeather:" + alertResult);
+		CallToolResult getCurrentWeatherResult = client.callTool(new CallToolRequest("getCurrentWeather", Map.of("cityCode", "101060101")));
+		System.out.println("getCurrentWeatherResult = " + getCurrentWeatherResult);
 
 		client.closeGracefully();
 	}

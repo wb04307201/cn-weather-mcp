@@ -20,7 +20,7 @@ China weather query service based on Model Context Protocol (MCP).
   "mcpServers": {
     "cn-weather-mcp": {
       "args": [
-        "io.github.wb04307201:cn-weather-mcp:1.0.0"
+        "io.github.wb04307201:cn-weather-mcp:1.0.1"
       ],
       "command": "jbang"
     }
